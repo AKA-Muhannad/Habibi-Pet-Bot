@@ -2,6 +2,8 @@
 
 Your little habibi for big ideas. A native macOS desktop pet for Claude Code and Apple Intelligence.
 
+![Habibi-Pet-Bot preview showing the desktop companion, activity pill, and all ten pixel pets](docs/images/habibi-pet-bot-preview.png)
+
 [Download releases](https://github.com/AKA-Muhannad/Habibi-Pet-Bot/releases) · [Installation guide](docs/INSTALL.md) · [Release guide](docs/RELEASING.md)
 
 ## Meet your sidekick
