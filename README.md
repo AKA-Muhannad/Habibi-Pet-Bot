@@ -65,6 +65,7 @@ Claude Code must be installed and authenticated separately. Apple Intelligence n
 | Terminal button | Choose a folder and start Claude Code |
 | Sparkles button | Open Siri |
 | Paw button | Preview and choose from 10 pets |
+| Eye button | Hide/show the pet; a small floating restore button stays visible |
 | Activity return arrow | Open the assistant's app |
 | Activity pause button | Pause popup updates; the assistant keeps running |
 

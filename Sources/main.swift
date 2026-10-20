@@ -124,6 +124,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     var detailLabel = NSTextField(wrappingLabelWithString: "Open an assistant below. Activity from Claude sessions launched here appears in this bubble.")
     var gallery: NSWindow?
     var launcher: PetPanel!
+    var visibilityButton: NSButton!
+    var restoreActivityOnShow = false
     var checkingUpdates = false
     var trackingPaused = false
     var activityFile: URL?
@@ -156,6 +158,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(positionBubble), name: NSWindow.didMoveNotification, object: panel)
         pollTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in self?.readActivity() }
         showActivity("Your AI assistant", "Pick an assistant below. Let’s make something!")
+        setPetVisible(!prefs.bool(forKey: "petHidden"))
         if CommandLine.arguments.contains("--choose-pet") { changePet() }
     }
     func buildBubble() {
@@ -191,18 +194,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         control("xmark", "Close activity pill", #selector(toggleBubble), NSRect(x: 0, y: 61, width: 25, height: 25), content)
     }
     func buildLauncher() {
-        launcher = PetPanel(contentRect: NSRect(x: 0, y: 0, width: 196, height: 38), styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        launcher = PetPanel(contentRect: NSRect(x: 0, y: 0, width: 242, height: 38), styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
         launcher.backgroundColor = .clear; launcher.isOpaque = false; launcher.hasShadow = true
         launcher.level = .floating; launcher.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        let bar = NSVisualEffectView(frame: NSRect(x: 0, y: 0, width: 196, height: 38))
+        let bar = NSVisualEffectView(frame: NSRect(x: 0, y: 0, width: 242, height: 38))
         bar.material = .hudWindow; bar.state = .active; bar.appearance = NSAppearance(named: .darkAqua)
         bar.wantsLayer = true; bar.layer?.cornerRadius = 19; bar.layer?.masksToBounds = true
         launcher.contentView = bar
-        for (index, item) in [("terminal", "Start Claude Code in a folder", #selector(openClaude)), ("sparkles", "Open Apple Intelligence", #selector(openSiri)), ("pawprint", "Change pet", #selector(changePet)), ("chevron.up", "Show or hide activity", #selector(toggleBubble))].enumerated() {
+        for (index, item) in [("terminal", "Start Claude Code in a folder", #selector(openClaude)), ("sparkles", "Open Apple Intelligence", #selector(openSiri)), ("pawprint", "Change pet", #selector(changePet)), ("chevron.up", "Show or hide activity", #selector(toggleBubble)), ("eye.slash", "Hide pet", #selector(togglePet))].enumerated() {
             let button = NSButton(image: NSImage(systemSymbolName: item.0, accessibilityDescription: item.1)!, target: self, action: item.2)
             button.isBordered = false; button.contentTintColor = index == 0 ? .systemPurple : .white
             button.frame = NSRect(x: 8 + index * 46, y: 4, width: 42, height: 30)
             button.toolTip = item.1; button.setAccessibilityLabel(item.1); bar.addSubview(button)
+            if index == 4 { visibilityButton = button }
         }
         launcher.orderFrontRegardless()
     }
@@ -260,7 +264,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard bubble != nil else { return }
         let area = panel.screen?.visibleFrame ?? NSScreen.main!.visibleFrame
         if let launcher {
-            launcher.setFrameOrigin(NSPoint(x: min(max(panel.frame.midX - 98, area.minX + 8), area.maxX - 204), y: max(area.minY + 4, panel.frame.minY - 32)))
+            let width = launcher.frame.width
+            launcher.setFrameOrigin(NSPoint(x: min(max(panel.frame.midX + 121 - width, area.minX + 8), area.maxX - width - 8), y: max(area.minY + 4, panel.frame.minY - 32)))
         }
         let x = min(max(panel.frame.minX + 8, area.minX + 8), area.maxX - 448)
         var y = panel.frame.maxY + 12
@@ -309,7 +314,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let menu = makeMenu()
         menu.popUp(positioning: nil, at: NSPoint(x: 10, y: 105), in: panel.contentView)
     }
-    @objc func showBubble() { positionBubble(); bubble.orderFrontRegardless() }
+    @objc func showBubble() { if !panel.isVisible { setPetVisible(true) }; positionBubble(); bubble.orderFrontRegardless() }
     @objc func openSiri() {
         showActivity("Apple Intelligence", "Opening Siri · Live progress unavailable")
         NSWorkspace.shared.openApplication(at: URL(fileURLWithPath: "/System/Applications/Siri.app"), configuration: .init()) { _, error in
@@ -378,7 +383,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         parts.queryItems = [URLQueryItem(name: "name", value: name)]
         if let url = parts.url, !NSWorkspace.shared.open(url) { message("Could not open Shortcuts", "Check that Shortcuts is installed and the saved shortcut name matches.") }
     }
-    @objc func togglePet() { if panel.isVisible { panel.orderOut(nil); bubble.orderOut(nil); launcher.orderOut(nil) } else { panel.orderFrontRegardless(); positionBubble(); launcher.orderFrontRegardless() }; refresh() }
+    @objc func togglePet() { setPetVisible(!panel.isVisible) }
+    func setPetVisible(_ visible: Bool) {
+        if visible {
+            panel.orderFrontRegardless()
+        } else {
+            restoreActivityOnShow = bubble.isVisible
+            panel.orderOut(nil); bubble.orderOut(nil)
+        }
+        // Keep one floating button available even when the pet and its tools are hidden.
+        let width: CGFloat = visible ? 242 : 56
+        launcher.setContentSize(NSSize(width: width, height: 38))
+        for case let button as NSButton in launcher.contentView?.subviews ?? [] {
+            button.isHidden = !visible && button !== visibilityButton
+        }
+        visibilityButton.frame.origin.x = visible ? 192 : 6
+        let label = visible ? "Hide pet" : "Show pet"
+        visibilityButton.image = NSImage(systemSymbolName: visible ? "eye.slash" : "eye", accessibilityDescription: label)
+        visibilityButton.toolTip = label; visibilityButton.setAccessibilityLabel(label)
+        prefs.set(!visible, forKey: "petHidden")
+        positionBubble(); launcher.orderFrontRegardless()
+        if visible && restoreActivityOnShow { bubble.orderFrontRegardless() }
+        refresh()
+    }
     @objc func resetPosition() {
         let screen = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1000, height: 700)
         panel.setFrameOrigin(NSPoint(x: screen.maxX - 160, y: screen.minY + 24))

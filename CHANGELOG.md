@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Sticky desktop show/hide button remains available while the pet is hidden.
+- Pet visibility is remembered across launches.
+
 ## 1.0.1
 
 - One-command native macOS installer with checksum validation and source-build fallback.
