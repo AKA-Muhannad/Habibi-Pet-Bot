@@ -1,0 +1,23 @@
+name: Build and test
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build universal app
+        run: zsh build.sh
+      - name: Test activity bridge
+        run: python3 -m unittest discover -s tests -v
+      - name: Validate shell scripts
+        run: zsh -n build.sh scripts/package.sh scripts/Install.command
+      - name: Upload app
+        uses: actions/upload-artifact@v4
+        with:
+          name: Habibi-Pet-Bot-universal
+          path: dist/

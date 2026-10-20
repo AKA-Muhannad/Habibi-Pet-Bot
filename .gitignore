@@ -1,0 +1,10 @@
+.build/
+dist/
+.DS_Store
+*.p12
+*.p8
+.env
+.env.*
+!.env.example
+*.keychain-db
+__pycache__/
