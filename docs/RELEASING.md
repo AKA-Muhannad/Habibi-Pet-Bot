@@ -43,7 +43,7 @@ The build enables hardened runtime and timestamps the Developer ID signature. Pa
 Replace both the ZIP and checksum file in the draft release using GitHub's release editor. If using an authenticated GitHub CLI:
 
 ```sh
-gh release upload v1.0.1 dist/Habibi-Pet-Bot-1.0.1-universal.zip dist/SHA256SUMS.txt --clobber
+gh release upload v1.0.1 dist/Habibi-Pet-Bot-1.0.1-universal.zip dist/Habibi-Pet-Bot-universal.zip dist/SHA256SUMS.txt install.sh --clobber
 ```
 
 Verify the downloaded ZIP and smoke-test on a separate Mac before publishing the draft. Check pet selection, dragging, hide/show, Siri opening, Claude folder selection, activity events, and update checks. Intel binaries are cross-compiled and need runtime verification on Intel hardware.
@@ -55,3 +55,11 @@ Apple reference: https://developer.apple.com/documentation/security/notarizing-m
 The app stores its version in Info.plist and repository in HabibiPetBotRepository. GitHub Actions provides GITHUB_REPOSITORY during builds; pass it explicitly for local builds intended for release. A user override is available in the app menu. No credentials are sent by the update checker. It contacts GitHub's public latest-release endpoint only on request, compares numeric stable versions, and offers the canonical GitHub release page. It does not download or execute update code.
 
 To withdraw a bad release, make it a draft again and publish a higher patch version. Installed preferences are kept during replacement. Do not reuse a published tag for different source code.
+
+## CLI and Homebrew distribution
+
+`install.sh` on main is the native bootstrap endpoint. It supports a version-pinned install and defaults to the latest stable release. Before the first public release, it falls back to a local source build. Never remove quarantine or disable Gatekeeper in this script.
+
+Every package includes the versioned ZIP plus an identical stable-name alias, `Habibi-Pet-Bot-universal.zip`, for the Homebrew cask in `Casks/`. The draft release workflow uploads both ZIPs, SHA256SUMS.txt, and install.sh. When replacing assets with notarized builds, upload both ZIP names and the checksum manifest together. The checksum manifest names the versioned ZIP.
+
+The project itself can be tapped with an explicit Git URL; a separate homebrew-* repository is not required. The cask intentionally uses the mutable latest-release URL with `version :latest` and `sha256 :no_check`; users update with `brew reinstall`. Native installation instead validates the versioned ZIP against the release checksum manifest. Neither method can download a draft or private release. Publish the reviewed draft to enable binary installation.

@@ -2,6 +2,42 @@
 
 Requires macOS 13 or later. The universal app supports Apple Silicon and Intel. Apple Intelligence features require Apple's compatible hardware, macOS version, language, and enabled settings. Claude Code must be installed and signed in separately.
 
+## Native install (recommended)
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/AKA-Muhannad/Habibi-Pet-Bot/main/install.sh | bash
+```
+
+Installs in `~/Applications`, verifies the release checksum and app signature, and opens the pet. Quit any running pet first. Rerun the command to update. If there is no published release, it builds from main using Xcode command line tools. To request a source build explicitly, or choose an exact release:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/AKA-Muhannad/Habibi-Pet-Bot/main/install.sh -o /tmp/habibi-install.sh
+bash /tmp/habibi-install.sh --source
+bash /tmp/habibi-install.sh --version 1.0.0
+```
+
+You can inspect the downloaded script before running it. Options: `--app-dir /absolute/path`, `--no-open`, `--version X.Y.Z`, `--source`, and `--help`. No sudo. Existing apps are staged and verified before replacement; the previous app is moved to Trash. Preferences remain saved. Do not mix install methods: update a Homebrew installation through Homebrew.
+
+## Homebrew
+
+```sh
+brew tap aka-muhannad/habibi-pet-bot https://github.com/AKA-Muhannad/Habibi-Pet-Bot.git
+brew install --cask aka-muhannad/habibi-pet-bot/habibi-pet-bot
+```
+
+The cask requires a published release with the stable-name `Habibi-Pet-Bot-universal.zip` asset. It uses `version :latest`, so update explicitly with:
+
+```sh
+brew update
+brew reinstall --cask aka-muhannad/habibi-pet-bot/habibi-pet-bot
+```
+
+The mutable latest-release asset uses Homebrew's `sha256 :no_check`. Use the native installer if you want the release manifest checksum verified. Homebrew and macOS keep their normal verification and quarantine behavior.
+
+Linux, WSL, Windows, and WinGet are not supported by this native macOS app.
+
+## Manual download
+
 1. Download `Habibi-Pet-Bot-VERSION-universal.zip` from this project's GitHub Releases page.
 2. Extract the ZIP by double-clicking it.
 3. Move `Habibi-Pet-Bot.app` to Applications. Alternatively, run the included `Install.command` to install in `~/Applications` without administrator access. The installer asks before replacing a previous version and moves it to Trash.

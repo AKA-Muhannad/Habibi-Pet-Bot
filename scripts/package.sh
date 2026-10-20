@@ -21,6 +21,7 @@ chmod +x "$stage/Install.command"
 ditto -c -k --keepParent "$stage/Habibi-Pet-Bot.app" "$archive"
 # Add installer and instructions alongside the app at the root of the archive.
 (cd "$stage" && /usr/bin/zip -q "$archive" Install.command INSTALL.md)
+cp "$archive" dist/Habibi-Pet-Bot-universal.zip
 (cd dist && shasum -a 256 "$asset" > SHA256SUMS.txt)
 echo "Packaged: $PWD/dist/$asset"
 if [[ -z "${NOTARY_PROFILE:-}" ]]; then

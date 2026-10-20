@@ -4,6 +4,7 @@ An animated desktop companion for Claude Code and Apple Intelligence.
 - Compact task activity pill for Claude sessions started from the pet.
 - Project folder chooser and assistant toolbar.
 - Manual update checks from the paw menu.
+- Native CLI installation and a project Homebrew tap.
 
 Download the universal ZIP for Apple Silicon or Intel Macs running macOS 13 or later. Extract, then move Habibi-Pet-Bot.app to Applications or run Install.command to install in your personal Applications folder. Quit the old app before replacing it. Preferences are preserved.
 

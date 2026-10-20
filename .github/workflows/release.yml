@@ -22,4 +22,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          gh release create "$RELEASE_TAG" dist/Habibi-Pet-Bot-*-universal.zip dist/SHA256SUMS.txt --draft --verify-tag --title "Habibi-Pet-Bot $RELEASE_TAG" --notes-file docs/RELEASE-NOTES.md
+          gh release create "$RELEASE_TAG" dist/Habibi-Pet-Bot-*-universal.zip dist/Habibi-Pet-Bot-universal.zip dist/SHA256SUMS.txt install.sh --draft --verify-tag --title "Habibi-Pet-Bot $RELEASE_TAG" --notes-file docs/RELEASE-NOTES.md

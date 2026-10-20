@@ -17,14 +17,39 @@ No API keys, third-party runtime dependencies, or analytics. Uses native AppKit 
 
 ## Install
 
-Requires **macOS 13 or later**, on Apple Silicon or Intel. Apple Intelligence needs a compatible Mac and macOS version with the feature enabled. Claude Code must be installed and authenticated separately.
+**macOS 13+ only · Apple Silicon and Intel**
 
-1. Open [Releases](https://github.com/AKA-Muhannad/Habibi-Pet-Bot/releases). If no release is published yet, use the source-build steps below.
-2. Download and extract `Habibi-Pet-Bot-VERSION-universal.zip`.
-3. Move `Habibi-Pet-Bot.app` to Applications, or run the included `Install.command` to install in `~/Applications`.
-4. Open the app. A little pet and toolbar appear near the bottom-right of your desktop.
+### Native install (recommended)
 
-Automated builds are **ad-hoc signed and not notarized**. See each release's notes for its signing status. For normal public distribution, the maintainer must sign with Developer ID and notarize it. You can build locally from source without a Developer ID. See the [installation guide](docs/INSTALL.md).
+```sh
+curl -fsSL https://raw.githubusercontent.com/AKA-Muhannad/Habibi-Pet-Bot/main/install.sh | bash
+```
+
+Installs into `~/Applications` and opens your pet. No sudo or Homebrew required. Quit the pet and rerun the same command to update; your preferences are kept and the previous app is moved to Trash.
+
+Published releases are downloaded and checked against their SHA-256 manifest and app signature. **Until the first release is published**, the installer builds from source, which requires Xcode command line tools (`xcode-select --install`). Release notes describe whether a binary is Apple-notarized. The installer preserves macOS security settings.
+
+### Homebrew
+
+```sh
+brew tap aka-muhannad/habibi-pet-bot https://github.com/AKA-Muhannad/Habibi-Pet-Bot.git
+brew install --cask aka-muhannad/habibi-pet-bot/habibi-pet-bot
+```
+
+Requires a **published release** containing `Habibi-Pet-Bot-universal.zip`. This is a project-maintained tap, not an official Homebrew cask. To update its latest-version cask:
+
+```sh
+brew update
+brew reinstall --cask aka-muhannad/habibi-pet-bot/habibi-pet-bot
+```
+
+### Download manually
+
+Open [Releases](https://github.com/AKA-Muhannad/Habibi-Pet-Bot/releases), download and extract the universal ZIP, then move `Habibi-Pet-Bot.app` to Applications. The included `Install.command` can install into your personal Applications folder. See the [installation guide](docs/INSTALL.md).
+
+**Linux / WSL / Windows / WinGet:** not supported. Habibi-Pet-Bot uses macOS AppKit; this installer does not make it cross-platform.
+
+Claude Code must be installed and authenticated separately. Apple Intelligence needs compatible hardware, macOS, and enabled Apple settings.
 
 ## Use
 
@@ -45,7 +70,7 @@ Claude Code uses your existing installation and account. The pet launches an int
 
 ## Update
 
-Choose **Check for updates…** in the paw menu. If a newer version is available, open its download page, quit the old pet, and replace the app using the ZIP or installer. Your preferences stay saved. Updates are manual; nothing installs in the background.
+Choose **Check for updates…** in the paw menu. If a newer version is available, open its download page, quit the old pet, and replace the app using the ZIP or installer. Or quit the pet and rerun the native install command; Homebrew users can run the reinstall command above. Your preferences stay saved. Updates are manual; nothing installs in the background.
 
 ## Build from source
 
