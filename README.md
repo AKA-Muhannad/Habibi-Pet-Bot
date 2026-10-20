@@ -19,6 +19,8 @@ No API keys, third-party runtime dependencies, or analytics. Uses native AppKit 
 
 ## Install
 
+![Installation options for Habibi-Pet-Bot: native macOS install recommended, Homebrew available after a release, WinGet unsupported](docs/images/installation-guide.png)
+
 **macOS 13+ only · Apple Silicon and Intel**
 
 ### Native install (recommended)

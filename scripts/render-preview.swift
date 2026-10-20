@@ -48,3 +48,30 @@ for style in PetStyle.allCases {
 }
 NSGraphicsContext.restoreGraphicsState()
 try bitmap.representation(using: .png, properties: [:])!.write(to: URL(fileURLWithPath: CommandLine.arguments[1]))
+
+// Installation card: use the project's own endpoint and accurate platform support.
+let installBitmap = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: 1600, pixelsHigh: 860, bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0)!
+NSGraphicsContext.saveGraphicsState()
+NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: installBitmap)
+color(0.065, 0.075, 0.095).setFill(); NSRect(x: 0, y: 0, width: 1600, height: 860).fill()
+text("Bring your habibi home.", 76, 748, 48, .bold)
+text("Install Habibi-Pet-Bot from your terminal", 80, 697, 25, .regular, color(0.67, 0.72, 0.80))
+rounded(NSRect(x: 76, y: 586, width: 566, height: 66), 20, color(0.35, 0.23, 0.52))
+text("Native Install (Recommended)", 104, 605, 26, .semibold)
+rounded(NSRect(x: 662, y: 586, width: 280, height: 66), 20, color(0.13, 0.15, 0.19), border: true)
+text("Homebrew", 729, 605, 26, .medium)
+rounded(NSRect(x: 962, y: 586, width: 562, height: 66), 20, color(0.13, 0.15, 0.19), border: true)
+text("WinGet · Not supported", 1013, 605, 26, .medium, color(0.60, 0.64, 0.71))
+text("macOS 13+ · Apple Silicon and Intel", 80, 520, 27, .semibold)
+rounded(NSRect(x: 76, y: 368, width: 1448, height: 126), 20, color(0.105, 0.12, 0.15), border: true)
+let command = "curl -fsSL https://raw.githubusercontent.com/AKA-Muhannad/Habibi-Pet-Bot/main/install.sh | bash"
+(command as NSString).draw(at: NSPoint(x: 106, y: 421), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 22, weight: .medium), .foregroundColor: NSColor.white])
+text("No sudo · Installs in ~/Applications · Rerun to update", 108, 389, 20, .regular, color(0.67, 0.72, 0.80))
+text("Homebrew", 80, 304, 25, .semibold)
+text("Project tap instructions are below. Requires a published release.", 80, 266, 23, .regular, color(0.67, 0.72, 0.80))
+text("Before the first published release, native install builds from source", 80, 184, 23, .medium)
+text("and requires Xcode command line tools. Linux, WSL, and Windows are not supported.", 80, 149, 22, .regular, color(0.67, 0.72, 0.80))
+text("Habibi-Pet-Bot", 80, 62, 21, .semibold, color(0.69, 0.58, 0.90))
+NSGraphicsContext.restoreGraphicsState()
+let installOutput = URL(fileURLWithPath: CommandLine.arguments[1]).deletingLastPathComponent().appendingPathComponent("installation-guide.png")
+try installBitmap.representation(using: .png, properties: [:])!.write(to: installOutput)
